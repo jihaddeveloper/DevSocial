@@ -183,5 +183,25 @@ router.post(
     }
 );
 
+// @route   POST /api/user/oauth/google
+// @desc    Google oauth
+// @access  Private
+router.post(
+    "/oauth/google",
+    passport.authenticate("googleToken", {
+        session: false
+    }),
+    (req, res) => {
+
+        // Generate Token
+        const token = signToken(req.user);
+
+        //Respond with token
+        res.status(200).json({
+            token: 'Bearer ' + token
+        });
+    }
+);
+
 //Export
 module.exports = router;
