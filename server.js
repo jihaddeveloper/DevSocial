@@ -1,8 +1,14 @@
-//Library imports
+//  Author: Mohammad Jihad Hossain
+//  Create Date: 02/05/2019
+//  Modify Date: 02/05/2019
+//  Description: Main entry file for rest api project for ECL E-Commerce Forum
+
+//  Library imports
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
+const morgan = require('morgan');
 
 //Passport config
 require('./config/passport');
@@ -19,11 +25,19 @@ const profileController = require('./routes/api/profileController');
 //Main Application
 const app = express();
 
-//Bodyparser Middleware to read from frontend
+//Setup static folder for images and files
+app.use('/uploads', express.static('uploads'));
+
+//Bodyparser Middleware to read from from data
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+
+//To read raw json input.
 app.use(bodyParser.json());
+
+//To see the executed url
+app.use(morgan('dev'));
 
 //MongoDB Connection
 mongoose

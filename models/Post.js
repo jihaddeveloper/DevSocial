@@ -1,4 +1,9 @@
-//Imports
+//  Author: Mohammad Jihad Hossain
+//  Create Date: 02/05/2019
+//  Modify Date: 02/05/2019
+//  Description: Main entry file for rest api project for ECL E-Commerce Forum
+
+//  Library imports
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -20,6 +25,18 @@ const PostSchema = new Schema({
         required: true
     },
     avatar: {
+        type: String
+    },
+    imagePath: {
+        type: String
+    },
+    image1: {
+        type: String
+    },
+    image2: {
+        type: String
+    },
+    image3: {
         type: String
     },
     likes: [{

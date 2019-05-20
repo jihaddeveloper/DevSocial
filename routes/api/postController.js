@@ -1,8 +1,41 @@
+//  Author: Mohammad Jihad Hossain
+//  Create Date: 02/05/2019
+//  Modify Date: 02/05/2019
+//  Description: Main entry file for rest api project for ECL E-Commerce Forum
+
 //Imports
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const passport = require('passport');
+
+//Image save
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, new Date().toISOString() + file.originalname);
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+        cb(null, true);
+    } else {
+        cb(null, false)
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: fileFilter
+});
 
 //Import Input validator
 const validatePostInput = require('../../validation/post');
@@ -11,12 +44,15 @@ const validatePostInput = require('../../validation/post');
 const Post = require('../../models/Post');
 const Profile = require('../../models/Profile');
 
+// With single image
 // @route POST /api/post/create
 // @desc Create post
 // @access Private
-router.post('/create', passport.authenticate('jwt', {
+router.post('/create', upload.single('images'), passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
+
+    console.log(req.file);
 
     //Set Validation
     const {
@@ -34,7 +70,45 @@ router.post('/create', passport.authenticate('jwt', {
         postCategory: req.body.postCategory,
         name: req.body.name,
         text: req.body.text,
-        avatar: req.body.avatar
+        avatar: req.body.avatar,
+        imagePath: req.file.path
+    });
+
+    //Save new post
+    newPost.save().then(post => res.json(post));
+});
+
+
+// With multiple images
+// @route POST /api/post/create
+// @desc Create post
+// @access Private
+router.post('/creates', upload.array('images', 3), passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+
+    console.log(req.files);
+
+    //Set Validation
+    const {
+        errors,
+        isValid
+    } = validatePostInput(req.body);
+
+    //Check Validation
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+
+    const newPost = new Post({
+        user: req.user.id,
+        postCategory: req.body.postCategory,
+        name: req.body.name,
+        text: req.body.text,
+        avatar: req.body.avatar,
+        image1: req.files[0].path,
+        image2: req.files[1].path,
+        image3: req.files[2].path
     });
 
     //Save new post
@@ -49,6 +123,8 @@ router.get('/all', (req, res) => {
         .sort({
             createDate: -1
         })
+        // .select('imageInfo')
+        // .exec()
         .then(posts => res.json(posts))
         .catch(err => res.status(404).json({
             nopostsfound: 'No posts found'
@@ -60,6 +136,8 @@ router.get('/all', (req, res) => {
 // @access Public
 router.get('/:post_id', (req, res) => {
     Post.findById(req.params.post_id)
+        // .select('imageInfo')
+        // .exec()
         .then(post => res.json(post))
         .catch(err => res.status(404).json({
             nopostfound: 'No post found with that id'
