@@ -28,7 +28,7 @@ const PostSchema = new Schema({
         type: String
     },
     imagePath: {
-        type: String
+        type: Array, default: []
     },
     image1: {
         type: String
