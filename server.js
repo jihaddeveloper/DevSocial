@@ -17,14 +17,17 @@ require("./config/passport");
 //Secret tokens
 const secret = require("./config/secret");
 
+//Main Application
+const app = express();
+
+//Headers For API Accessing
+app.use(cors());
+
 //Route Controller imports
 const userController = require("./routes/api/userController");
 const postCategoryController = require("./routes/api/postCategoryController");
 const postController = require("./routes/api/postController");
 const profileController = require("./routes/api/profileController");
-
-//Main Application
-const app = express();
 
 //Setup static folder for images and files
 app.use("/uploads", express.static("uploads"));
@@ -42,37 +45,6 @@ app.use(bodyParser.json());
 //To see the executed url
 app.use(morgan("dev"));
 
-//Headers For API Accessing
-app.use(function(req, res, next) {
-  // Website you wish to allow to connect
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "https://eclforum.herokuapp.com/"
-  );
-
-  // Request methods you wish to allow
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-
-  // Request headers you wish to allow
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type"
-  );
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
-  res.setHeader("Access-Control-Allow-Credentials", true);
-
-  // Pass to next layer of middleware
-  next();
-});
-
-//Headers For API Accessing
-app.use(cors({ origin: "https://eclforum.herokuapp.com/" }));
-
 //MongoDB Connection
 mongoose
   .connect(secret.mongoURI)
@@ -83,10 +55,10 @@ mongoose
 app.get("/", (req, res) => res.send("Hello World"));
 
 //Using route controller
-app.use("/api/user", userController);
-app.use("/api/profile", profileController);
-app.use("/api/post", postController);
-app.use("/api/postcategory", postCategoryController);
+app.use("/api/user", cors(), userController);
+app.use("/api/profile", cors(), profileController);
+app.use("/api/post", cors(), postController);
+app.use("/api/postcategory", cors(), postCategoryController);
 
 //Serve static assets if in production or deployment
 if (process.env.NODE_ENV === "production") {
