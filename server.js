@@ -11,14 +11,14 @@ const path = require("path");
 const morgan = require("morgan");
 const cors = require("cors");
 
+//Main Application
+const app = express();
+
 //Passport config
 require("./config/passport");
 
 //Secret tokens
 const secret = require("./config/secret");
-
-//Main Application
-const app = express();
 
 //Headers For API Accessing
 app.use(cors());

@@ -15,7 +15,7 @@ const passport = require("passport");
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
 
-//Import file
+//Import secret file
 const config = require("../../config/secret");
 
 //Import model
@@ -88,15 +88,18 @@ router.post("/register", (req, res) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
           if (err) throw err;
           newUser.password = hash;
-          newUser.save();
+          newUser
+            .save()
+            .then(user => res.json(user))
+            .catch(err => console.log(err));
 
-          // Generate Token
-          const token = signToken(newUser);
+          // // Generate Token
+          // const token = signToken(newUser);
 
-          //Respond with token
-          res.status(200).json({
-            token: "Bearer " + token
-          });
+          // //Respond with token
+          // res.status(200).json({
+          //   token: "Bearer " + token
+          // });
         });
       });
     }
