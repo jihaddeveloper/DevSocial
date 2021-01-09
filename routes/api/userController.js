@@ -21,6 +21,9 @@ const config = require("../../config/secret");
 //Import model
 const User = require("../../models/User");
 
+//Import User controller
+const userController = require("../../controller/userRouteController");
+
 //Token generator
 signToken = user => {
   //JWT payload
@@ -41,16 +44,17 @@ signToken = user => {
 // @route   GET /api/user/all-user
 // @desc    Get All User
 // @access  Public
-router.get("/all-user", (req, res) => {
-  User.find().then(users => {
-    //Check for User
-    if (!users) {
-      return res.status(404).json(errors);
-    }
-
-    return res.status(400).json(users);
-  });
-});
+router.get("/all-user", async (req, res)=> {
+  await User.find().then(users => {
+     //Check for User
+     if (!users) {
+       console.log('abc')
+       return res.status(404).json(errors);
+     }
+ 
+     return res.status(400).json(users);
+   });
+ } );
 
 // @route   POST /api/user/register
 // @desc    Register User

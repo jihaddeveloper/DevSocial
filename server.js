@@ -60,7 +60,7 @@ app.use("/api/profile", cors(), profileController);
 app.use("/api/post", cors(), postController);
 app.use("/api/postcategory", cors(), postCategoryController);
 
-//Serve static assets if in production or deployment
+// Serve static assets if in production or deployment
 if (process.env.NODE_ENV === "production") {
   //Set static folder
   app.use(express.static("client/build"));

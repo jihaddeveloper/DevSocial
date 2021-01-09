@@ -4,7 +4,7 @@
 //  Description: Main entry file for rest api project for ECL E-Commerce Forum
 
 module.exports = {
-  mongoURI: "mongodb://jihad:jihad1234@ds235180.mlab.com:35180/devsocial_db",
+  mongoURI: "mongodb+srv://jihad:password1234@jihadcluster.ximgp.mongodb.net/devsocial_db?retryWrites=true&w=majority",
   port: process.env.PORT || 9000,
   secretKey: "Jihad@Dev!",
 
