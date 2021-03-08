@@ -10,6 +10,8 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const morgan = require("morgan");
 const cors = require("cors");
+const formidableMiddle = require('express-formidable');
+const expessFormData = require('express-form-data');
 
 //Main Application
 const app = express();
@@ -23,6 +25,10 @@ const secret = require("./config/secret");
 //Headers For API Accessing
 app.use(cors());
 
+// Form data
+app.use(expessFormData.parse());
+//app.use(formidableMiddle());
+
 //Route Controller imports
 const userController = require("./routes/api/userController");
 const postCategoryController = require("./routes/api/postCategoryController");
@@ -32,15 +38,32 @@ const profileController = require("./routes/api/profileController");
 //Setup static folder for images and files
 app.use("/uploads", express.static("uploads"));
 
-//Bodyparser Middleware to read from from data
-app.use(
-  bodyParser.urlencoded({
-    extended: false
-  })
-);
+// To read data
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
+  res.header("Access-Control-Expose-Headers", "Content-Length");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Accept, Authorization, Content-Type, X-Requested-With, Range"
+  );
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  } else {
+    return next();
+  }
+});
 
 //To read raw json input.
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
+
+// Bodyparser Middleware to read from from data
+// app.use(
+//   bodyParser.urlencoded({
+//     extended: true
+//   })
+// );
 
 //To see the executed url
 app.use(morgan("dev"));
@@ -49,7 +72,7 @@ app.use(morgan("dev"));
 mongoose
   .connect(secret.mongoURI)
   .then(() => console.log("Conntected to MongoDB"))
-  .catch(err => console.log(err));
+  .catch((err) => console.log(err));
 
 //Entery point of the Application
 app.get("/", (req, res) => res.send("Hello World"));
@@ -71,7 +94,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 //Server startup
-app.listen(secret.port, function(err) {
+app.listen(secret.port, function (err) {
   if (err) throw err;
   console.log(`Server is Running on http://localhost:${secret.port}/`);
 });

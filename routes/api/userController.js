@@ -52,7 +52,7 @@ router.get("/all-user", async (req, res)=> {
        return res.status(404).json(errors);
      }
  
-     return res.status(400).json(users);
+     return res.status(200).json(users);
    });
  } );
 

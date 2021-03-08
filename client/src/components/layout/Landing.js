@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 
 class Landing extends Component {
 
+  // Check logged in User, then ridircet to Dashboard
   componentDidMount(){
     if (this.props.auth.isAuthenticated){
       this.props.history.push('/dashboard');
